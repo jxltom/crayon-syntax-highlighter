@@ -4,7 +4,7 @@ Plugin Name: Custom Crayon Syntax Highlighter
 Plugin URI: https://github.com/aramk/crayon-syntax-highlighter
 Github Plugin URI: https://github.com/jxltom/custom-crayon-syntax-highlighter
 Description: Supports multiple languages, themes, highlighting from a URL, local file or post text.
-Version: 3.1.0
+Version: 3.2.0
 Author: Aram Kocharyan
 Author URI: http://aramk.com/
 Text Domain: crayon-syntax-highlighter
