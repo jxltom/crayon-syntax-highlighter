@@ -29,19 +29,19 @@ class CrayonHighlighter {
 	// Inline code on a single floating line
 	private $is_inline = FALSE;
 	private $is_highlighted = TRUE;
-	
+
 	// Objects
 	// Stores the CrayonLang being used
 	private $language = NULL;
 	// A copy of the current global settings which can be overridden
 	private $settings = NULL;
-	
+
 	// Methods ================================================================
 	function __construct($url = NULL, $language = NULL, $id = NULL) {
 		if ($url !== NULL) {
 			$this->url($url);
 		}
-		
+
 		if ($language !== NULL) {
 			$this->language($language);
 		}
@@ -49,7 +49,7 @@ class CrayonHighlighter {
 		$id = $id !== NULL ? $id : uniqid();
 		$this->id($id);
 	}
-	
+
 	/* Tries to load the code locally, then attempts to load it remotely */
 	private function load() {
 		if (empty($this->url)) {
@@ -133,7 +133,7 @@ class CrayonHighlighter {
 			// Disable highlighting for errors and empty code
 			return;
 		}
-		
+
 		if ($this->language === NULL) {
 			$this->language_detect();
 		}
@@ -155,7 +155,7 @@ class CrayonHighlighter {
 				}
 				// Save code so output is plain output is the same
 				$this->code = $code;
-				
+
 				// Allow mixed if langauge supports it and setting is set
 				CrayonParser::parse($this->language->id());
 				if (!$this->setting_val(CrayonSettings::MIXED) || !$this->language->mode(CrayonParser::ALLOW_MIXED)) {
@@ -173,7 +173,7 @@ class CrayonHighlighter {
 			$this->runtime[CRAYON_FORMAT_TIME] = $tmr->stop();
 		}
 	}
-	
+
 	/* Used to format the glue in between code when finding mixed languages */
 	private function format_glue($glue, $highlight = TRUE) {
 		// TODO $highlight
@@ -201,15 +201,15 @@ class CrayonHighlighter {
 		if ($code === NULL) {
 			return $this->code;
 		} else {
+		    if ($this->setting_val(CrayonSettings::TRIM_CODE_TAG)) {
+                $code = preg_replace('#^\s*<\s*code[^>]*>#msi', '', $code);
+                $code = preg_replace('#</\s*code[^>]*>\s*$#msi', '', $code);
+            }
+
 			// Trim whitespace
 			if ($this->setting_val(CrayonSettings::TRIM_WHITESPACE)) {
 				$code = preg_replace("#(?:^\\s*\\r?\\n)|(?:\\r?\\n\\s*$)#", '', $code);
 			}
-
-            if ($this->setting_val(CrayonSettings::TRIM_CODE_TAG)) {
-                $code = preg_replace('#^\s*<\s*code[^>]*>#msi', '', $code);
-                $code = preg_replace('#</\s*code[^>]*>\s*$#msi', '', $code);
-            }
 
 			$before = $this->setting_val(CrayonSettings::WHITESPACE_BEFORE);
 			if ($before > 0) {
@@ -219,7 +219,7 @@ class CrayonHighlighter {
 			if ($after > 0) {
 				$code = $code . str_repeat("\n", $after);
 			}
-			
+
 			if (!empty($code)) {
 				$this->code = $code;
 				$this->needs_format = TRUE;
@@ -231,18 +231,18 @@ class CrayonHighlighter {
 		if ($id === NULL || !is_string($id)) {
 			return $this->language;
 		}
-		
+
 		if ( ($lang = CrayonResources::langs()->get($id)) != FALSE || ($lang = CrayonResources::langs()->alias($id)) != FALSE ) {
 			// Set the language if it exists or look for an alias
 			$this->language = $lang;
 		} else {
 			$this->language_detect();
 		}
-		
+
 		// Prepare the language for use, even if we have no code, we need the name
 		CrayonParser::parse($this->language->id());
 	}
-	
+
 	function language_detect() {
 		// Attempt to detect the language
 		if (!empty($id)) {
@@ -300,7 +300,7 @@ class CrayonHighlighter {
 		}
 		return CrayonUtil::arr($this->marked_lines, $lines);
 	}
-	
+
 	function range($str = NULL) {
 		if ($str === NULL) {
 			return $this->range;
@@ -326,7 +326,7 @@ class CrayonHighlighter {
 			$this->id = strval($id);
 		}
 	}
-	
+
 	function error($string = NULL) {
 		if (!$string) {
 			return $this->error;
@@ -344,7 +344,7 @@ class CrayonHighlighter {
 		if ($this->settings == NULL) {
 			$this->settings = CrayonGlobalSettings::get_obj();
 		}
-		
+
 		if ($mixed === NULL) {
 			return $this->settings;
 		} else if (is_string($mixed)) {
@@ -369,7 +369,7 @@ class CrayonHighlighter {
 			return (is_bool($default_return) ? $default_return : TRUE);
 		}
 	}
-	
+
 	// Set a setting value
 	// TODO fix this (see above)
 	function setting_set($name = NULL, $value = TRUE) {
@@ -394,26 +394,26 @@ class CrayonHighlighter {
 	function runtime() {
 		return $this->runtime;
 	}
-	
+
 	function is_highlighted($highlighted = NULL) {
 		if ($highlighted === NULL) {
-			return $this->is_highlighted;			
+			return $this->is_highlighted;
 		} else {
 			$this->is_highlighted = $highlighted;
 		}
 	}
-	
+
 	function is_mixed($mixed = NULL) {
 		if ($mixed === NULL) {
-			return $this->is_mixed;			
+			return $this->is_mixed;
 		} else {
 			$this->is_mixed = $mixed;
 		}
 	}
-	
+
 	function is_inline($inline = NULL) {
 		if ($inline === NULL) {
-			return $this->is_inline;			
+			return $this->is_inline;
 		} else {
 			$inline = CrayonUtil::str_to_bool($inline, FALSE);
 			$this->is_inline = $inline;
